@@ -1,0 +1,383 @@
+Assignment 5.5｜技术架构与数据流确认
+一、作业定位
+本作业位于 Assignment 5（交互概念探索） 与 Assignment 6（Prototype v1 + AI 输出接入） 之间，目的是在进入高保真原型设计之前，先确认当前选定的 steering workflow 是否具备清晰、可执行的最小可行技术落地路径。
+本作业不是重新定义项目方向，也不是重新训练模型，而是要回答一个关键问题：
+当前确定的 beginner-facing AI music steering workflow，究竟如何在技术上落地？
+
+二、作业目标
+本作业的目标包括四点：
+明确系统的最小可行技术架构
+
+
+明确用户输入、模型推理、建议生成与前端展示之间的数据流
+
+
+确认哪些部分需要模型，哪些部分不需要 GPU
+
+
+为 Assignment 6 的原型设计提供真实的技术约束与实现边界
+
+
+换句话说，本作业要解决的不是“界面长什么样”，而是：
+当用户真的开始输入旋律时，系统内部到底会发生什么。
+
+三、与前面作业的关系
+本作业建立在前面成果之上：
+Assignment 1 已明确项目目标、用户与成功标准
+
+
+Assignment 2 已确认本项目为何选择 steering interface，而不是 black-box one-shot generation
+
+
+Assignment 3 已定义 AI module 的输入、输出与技术边界
+
+
+Assignment 4 已完成第一个可运行的 AI baseline，包括：
+
+
+输入形状：[32, 37]
+
+
+中层属性预测：density、register、motion
+
+
+suggestion card 映射逻辑
+
+
+初步可解释输出
+
+
+因此，A5.5 的作用不是推翻已有工作，而是把这些已有成果串成一个真正可落地的产品技术路径。
+
+四、最小可行技术架构（MVP Architecture）
+当前项目的最小可行技术架构由五个模块组成：
+1. 前端旋律输入层（Frontend Melody Input Layer）
+负责：
+用户点击音符格或简化键盘输入旋律
+
+
+浏览器本地实时播放对应音高
+
+
+在前端状态中记录用户输入的 note sequence
+
+
+这一层的目标是让零基础用户在输入时就获得即时听觉反馈，从而对自己输入的旋律有最基础的判断。
+
+2. 分析触发层（Analysis Trigger Layer）
+负责：
+在用户完成输入后，由 Analyze 按钮触发分析流程
+
+
+将 note sequence 从前端提交给后端推理模块
+
+
+这一层的设计原则是：
+ 模型分析不是每点击一个音就实时重跑，而是在用户完成一个基本输入后统一触发。
+
+3. 后端推理层（Backend Inference Layer）
+负责：
+接收前端传来的 note sequence
+
+
+将用户输入转换为与训练阶段一致的模型输入格式
+
+
+调用已训练好的 baseline 模型进行推理
+
+
+输出中层音乐属性预测结果：
+
+
+density
+
+
+register
+
+
+motion
+
+
+这一层直接复用 Assignment 4 中已经训练好的轻量模型，不需要重新训练，也不需要在每次用户输入时启动新的 GPU 训练流程。
+
+4. 建议生成层（Suggestion Generation Layer）
+负责：
+将模型输出的中层属性结果映射为 2–3 张 suggestion cards
+
+
+每张卡片包含：
+
+
+style direction
+
+
+preset recommendation
+
+
+rhythm advice
+
+
+explanation text
+
+
+这一层的目标是把模型结果转化为新手能理解、能比较、能选择的创作方向，而不是直接给出不透明的分类结果。
+
+5. 前端比较与微调层（Frontend Comparison and Refinement Layer）
+负责：
+展示 suggestion cards
+
+
+支持用户比较不同方向
+
+
+支持用户选择其中一个方向继续推进
+
+
+提供轻量 refinement controls
+
+
+允许保存或回看一个版本
+
+
+这一层才是真正承载 steering interface 的交互核心：
+ 用户不是一次性接受一个结果，而是在比较、选择和微调中逐步建立创作主导感。
+
+五、最小可行技术架构图（文字版）
+[User]
+  ↓
+[Frontend Melody Input UI]
+  - click notes
+  - hear notes locally
+  - store note sequence
+  ↓
+[Analyze Button]
+  ↓
+[Backend Inference Service]
+  - preprocess input
+  - convert to 32x37 matrix
+  - load trained model
+  - run inference
+  ↓
+[Suggestion Card Generator]
+  - style
+  - preset
+  - rhythm advice
+  - explanation
+  ↓
+[Frontend Comparison + Refinement UI]
+  - compare cards
+  - choose one direction
+  - refine
+  - save version
+
+六、前后端数据流（Data Flow）
+Step 1｜用户输入旋律
+用户在前端的简化输入界面中点击音符。
+ 每次点击发生两件事：
+浏览器本地立即播放该音
+
+
+系统记录该音的 step、pitch、duration 等信息
+
+
+例如，前端内部可以将旋律记录为如下结构：
+[
+ {"step": 0, "pitch": 60, "duration": 2},
+ {"step": 4, "pitch": 62, "duration": 2},
+ {"step": 8, "pitch": 64, "duration": 4}
+]
+
+Step 2｜用户点击 Analyze
+用户完成一段基础旋律输入后，点击 Analyze。
+ 前端将 note sequence 作为请求数据发送给后端。
+
+Step 3｜后端进行输入预处理
+后端收到 note sequence 后，执行与 Assignment 4 保持一致的预处理流程：
+检查输入是否合法
+
+
+补齐或裁剪为固定长度
+
+
+转换为模型需要的 melody matrix
+
+
+形成形状为 [32, 37] 的输入矩阵
+
+
+这一步的目的是保证：
+ 前端用户输入的数据形式，与训练阶段的数据表示保持一致。
+
+Step 4｜模型推理
+后端加载 Assignment 4 中训练好的 baseline 模型，对输入进行一次推理，输出：
+density
+
+
+register
+
+
+motion
+
+
+例如：
+{
+ "density": "sparse",
+ "register": "high",
+ "motion": "smooth"
+}
+
+Step 5｜建议卡生成
+后端将上述中层属性映射为 suggestion cards，并返回给前端。
+ 例如：
+{
+ "cards": [
+   {
+     "style": "Dreamy / Calm",
+     "preset": "Soft Bell + Pad",
+     "rhythm_advice": "Keep it simple",
+     "explanation": "The melody stays in a higher register, with sparse rhythm and smooth motion, which fits a light and airy arrangement."
+   },
+   {
+     "style": "Warm / Lyrical",
+     "preset": "Piano + Soft Strings",
+     "rhythm_advice": "Maintain a gentle flow",
+     "explanation": "This direction keeps the melody expressive while adding a warmer harmonic base."
+   }
+ ]
+}
+
+Step 6｜前端展示与 refinement
+前端接收 suggestion cards 后：
+渲染 2–3 张卡片
+
+
+支持用户比较不同方向
+
+
+支持用户选择其中一个方向
+
+
+进入 refinement stage
+
+
+最终保存一个版本
+
+
+
+七、MVP 实现原则
+为了保证项目在课程周期内真正落地，本项目采用以下最小可行实现原则：
+原则 1：输入时实时发声，但不实时重跑模型
+用户在输入旋律时，可以立即听到声音反馈；
+ 但模型分析只在用户点击 Analyze 后触发。
+这样既保留了输入阶段的沉浸感，又避免了系统复杂度过高。
+
+原则 2：训练与推理分离
+当前使用 Colab 和 GPU 完成的是训练阶段；
+ 产品运行时只做推理阶段。
+因此，用户每次输入旋律时，并不需要重新训练模型，也不需要重新启动 GPU 训练流程。
+
+原则 3：先实现 suggestion-level intelligence，而不是 full generation
+当前阶段的技术目标不是直接生成完整音频作品，而是先让系统具备：
+理解短旋律
+
+
+给出方向性建议
+
+
+支持比较与微调
+
+
+这已经足以支撑一个有效的 steering interface。
+
+原则 4：先做半实时（semi-live）而不是全实时
+本项目的 MVP 采用的是：
+输入时本地实时音频反馈
+
+
+输入后统一分析
+
+
+再返回建议卡
+
+
+而不是“用户每输入一个音，模型就实时更新全部建议”。
+ 这是一种更适合课程项目的范围控制方式。
+
+八、哪些部分不需要 GPU？
+本项目的很多关键交互其实不需要 GPU：
+不需要 GPU 的部分
+前端点击输入
+
+
+浏览器本地发声
+
+
+note sequence 记录
+
+
+前端页面切换
+
+
+suggestion cards 的前端展示
+
+
+refinement 控件交互
+
+
+已训练模型的轻量推理（MVP 阶段可先用 CPU）
+
+
+需要 GPU 的部分
+Assignment 4 / Assignment 7 等阶段的模型训练
+
+
+后续如果加入更复杂的 sequence encoder 训练
+
+
+大规模实验与调参
+
+
+因此，本项目的产品落地逻辑是可行的：
+ GPU 主要用于研发与训练，而不是每次用户使用时都要实时调用。
+
+九、对现有代码、模型与作业的影响说明
+对已有代码的影响
+不需要推翻已有代码。
+ Assignment 4 的预处理与 baseline 模型仍然有效，并且会成为后端 inference 的基础。
+对已有模型的影响
+不需要立即重训模型。
+ 当前 baseline 模型已经足够支撑：
+workflow 验证
+
+
+suggestion cards 展示
+
+
+Assignment 6 的原型接入构想
+
+
+对 Assignment 5 的影响
+不改变最终选型。
+ 仍然采用：
+Suggestion-first + light stage refinement（A+ 方案）
+只是额外增加了一条实现说明：
+During melody input, users hear immediate local playback. After input is completed, the system runs lightweight inference to generate suggestion cards for comparison and refinement.
+
+十、结论
+本作业确认了当前项目的 steering workflow 具备明确的最小可行落地路径。
+ 在技术上，本项目不需要把所有能力都做成实时 AI，也不需要在用户每次输入时重新启动 GPU 训练。相反，它采用一种更可控、更适合课程项目的结构：
+输入阶段提供即时声音反馈
+
+
+分析阶段调用已训练模型做轻量推理
+
+
+输出阶段生成可比较、可微调的 suggestion cards
+
+
+refinement 阶段继续强化用户的控制感与创作主导感
+
+
+因此，当前项目不仅在概念上成立，也在技术上具备清晰的 MVP 落地方式。
+
+

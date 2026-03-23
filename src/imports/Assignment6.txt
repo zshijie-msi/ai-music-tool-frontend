@@ -1,0 +1,477 @@
+Assignment 6｜原型 Sprint 1：Prototype v1 + AI 输出接入
+建议完成：4/4–4/8
+ 权重：12 分
+作业目标
+做出第一版能“讲故事”的 prototype，不一定 fully functional，但要能演示完整工作流。
+你要提交的内容
+关键页面 v1
+
+
+至少 1 条 end-to-end 任务流
+
+
+3 个核心控件
+
+
+第一轮 AI 输出接入方式
+
+
+5 组输出 comparison cards
+
+
+这一步必须出现的 3 个控件
+建议锁定为：
+风格 / 配器方向对比
+
+
+逐步微调入口
+
+
+保存 / 回退 / 比较机制
+
+
+这三类控件最能体现你不是 prompt-in / music-out，而是在做“新手可理解、可比较、可控制”的共创体验。
+Rubric（12 分）
+3 分：用户能从头走完主任务
+
+
+2 分：3 个核心控件出现且各司其职
+
+
+2 分：AI 输出在界面中不是装饰，而是真参与流程
+
+
+2 分：页面信息层级清楚
+
+
+2 分：已开始积累输出对比素材
+
+
+1 分：原型能用于下一步测试
+
+
+
+
+Assignment 6｜原型 Sprint 1：Prototype v1 + AI 输出接入
+一、作业目标
+本次作业的目标是做出第一版能“讲故事”的交互原型。
+ 它不必 fully functional，但必须能够完整演示本项目的核心体验：
+零基础用户输入短旋律 → 听到基础反馈 → 系统分析并给出 2–3 个 AI 建议方向 → 用户比较、选择、微调 → 保存一个版本。
+这个原型的重点不是页面数量多，而是要证明：
+这不是一个 prompt-in / music-out 的黑箱工具
+
+
+AI 输出不是装饰，而是真正参与用户决策
+
+
+用户在流程中具有比较、选择、微调和保留版本的能力
+
+
+
+二、A6 的提交内容（正式版）
+本次作业将提交以下内容：
+1. 关键页面 v1
+至少完成一套能够支撑主任务流的关键页面。
+ 建议页面数量控制在 5–7 个核心页面。
+2. 至少 1 条 end-to-end 任务流
+必须有一条完整的主任务路径，让用户从输入开始，一直走到保存版本。
+3. 三个核心控件
+本次原型必须明确体现以下三类控件：
+风格 / 配器方向对比控件
+
+
+逐步微调入口
+
+
+保存 / 回退 / 比较机制
+
+
+4. 第一轮 AI 输出接入方式
+原型中要明确展示：
+AI 在哪里被触发
+
+
+AI 输出是什么形式
+
+
+AI 输出如何影响用户后续操作
+
+
+5. 5 组 comparison cards
+至少制作 5 组 AI 建议卡片，用于原型展示和后续测试。
+
+三、推荐页面结构（Prototype v1）
+我建议你做 6 个页面，最稳，也最符合你现在的 scope。
+
+Page 1｜Welcome / Entry
+目的：建立任务入口和产品定位
+建议内容：
+产品标题
+
+
+一句价值主张
+
+
+“Start creating” 按钮
+
+
+一句简短说明：
+ Enter a short melody, hear it instantly, and get AI suggestions you can compare and refine.
+
+
+
+Page 2｜Melody Input
+目的：让用户输入短旋律，并获得即时声音反馈
+建议内容：
+简化 note grid / mini keyboard
+
+
+可点击输入音符
+
+
+每次输入都能立刻发声
+
+
+当前已输入旋律的可视化
+
+
+“Clear” / “Undo” / “Analyze” 按钮
+
+
+这是整个系统的核心入口之一。
+
+Page 3｜AI Suggestion Cards
+目的：展示 2–3 个 AI 方向，让用户比较
+建议内容：
+3 张 suggestion cards
+
+
+每张卡包含：
+
+
+style
+
+
+preset
+
+
+rhythm advice
+
+
+short explanation
+
+
+支持 Compare / Select
+
+
+这是 A6 里最能体现“AI 真参与流程”的页面。
+
+Page 4｜Refinement Stage
+目的：让用户继续微调，而不是只选卡片就结束
+建议内容：
+当前已选方向摘要
+
+
+refinement controls，例如：
+
+
+simpler ↔ richer
+
+
+softer ↔ brighter
+
+
+more stable ↔ more active
+
+
+Apply changes / Back 按钮
+
+
+这一页就是你 A5 里 A+ 方案的 “light stage refinement”。
+
+Page 5｜Result / Draft Version
+目的：展示一版音乐草稿与当前配置
+建议内容：
+当前方向摘要
+
+
+当前 preset
+
+
+当前 rhythm advice
+
+
+可选的 short preview 区块（即使是假播放条也可以）
+
+
+Save version / Compare with previous / Go back to refine
+
+
+
+Page 6｜Saved Versions / Compare
+目的：体现版本意识，强化“我在创作”而不是“我在刷结果”
+建议内容：
+当前版本 vs 之前版本
+
+
+对比标签
+
+
+“Keep this version” / “Return to edit” / “Try a new direction”
+
+
+这页会让你的项目明显不像普通的一键生成工具。
+
+四、至少 1 条 End-to-End 主任务流
+下面这条可以直接写进作业，也可以作为原型测试任务。
+主任务
+Create a short calm and dreamy music draft from your own melody idea.
+用户路径
+用户进入 Welcome 页面
+
+
+点击 Start creating
+
+
+在 Melody Input 页面输入一段短旋律，并听到即时反馈
+
+
+点击 Analyze
+
+
+系统展示 3 张 suggestion cards
+
+
+用户比较后选择一个最接近 “calm / dreamy” 的方向
+
+
+在 Refinement 页面把结果调得更 simple / softer
+
+
+进入 Result 页面，查看当前草稿
+
+
+保存版本
+
+
+在 Compare 页面查看和前一版的差异
+
+
+这条任务流已经完整覆盖了：
+输入
+
+
+AI 参与
+
+
+选择
+
+
+微调
+
+
+保存
+
+
+比较
+
+
+
+五、三个核心控件（正式写法）
+控件 1｜风格 / 配器方向对比控件
+位置：AI Suggestion Cards 页面
+作用：
+将 AI 输出组织为 2–3 个可比较方向
+
+
+帮助零基础用户理解不同方向的差异
+
+
+把模型输出转化为用户可选择的创作路径
+
+
+形式建议：
+Card layout
+
+
+每张卡片有标题、preset、rhythm advice、explanation
+
+
+每张卡片都有 Select 按钮
+
+
+
+控件 2｜逐步微调入口
+位置：Refinement Stage 页面
+作用：
+让用户在选定方向后继续参与创作
+
+
+避免流程停留在“看卡片 → 选一个”
+
+
+形式建议：
+slider / segmented control / stepper
+
+
+三组最核心的轻量调节：
+
+
+simpler ↔ richer
+
+
+softer ↔ brighter
+
+
+more stable ↔ more active
+
+
+
+控件 3｜保存 / 回退 / 比较机制
+位置：Result 页面 + Compare 页面
+作用：
+建立版本意识
+
+
+强化创作主导感
+
+
+让用户看到自己的选择会留下痕迹
+
+
+形式建议：
+Save version
+
+
+Compare with previous
+
+
+Undo / Back to refine
+
+
+
+六、第一轮 AI 输出接入方式（A6 需要写清楚）
+这部分你不用做成完全真后端，但原型里必须表达明确。
+当前阶段建议写成：
+用户完成 melody input 后，点击 Analyze。系统调用轻量 AI suggestion module，对输入旋律进行推理，预测其 density、register 和 motion，并将预测结果映射为 2–3 张 suggestion cards。用户随后在这些 AI 建议中进行比较、选择和微调。
+在原型表现上：
+你至少要在页面上明确这三件事：
+AI 何时开始分析
+
+
+AI 以什么形式返回
+
+
+用户能拿这些返回结果做什么
+
+
+也就是说：
+ AI 输出不能只是页面角落里的小标签，而必须成为页面的主决策对象。
+
+七、5 组 comparison cards（建议直接做出来）
+下面我先给你 5 组可直接放进原型的英文 cards。
+ 这些风格和说法都与前面保持一致，也能接住你现在的 baseline 逻辑。
+
+Card Set 1
+Style: Dreamy / Calm
+ Preset: Soft Bell + Pad
+ Rhythm advice: Keep it simple
+ Explanation: The melody stays in a higher register, with sparse rhythm and smooth motion, which fits a light and airy arrangement.
+
+Card Set 2
+Style: Warm / Grounded
+ Preset: Warm Piano + Soft Strings
+ Rhythm advice: Keep a moderate level of complexity
+ Explanation: The melody sits in a lower register and moves smoothly, which suits a warmer and more grounded arrangement.
+
+Card Set 3
+Style: Energetic / Playful
+ Preset: Bright Pluck + Light Synth
+ Rhythm advice: Allow more rhythmic activity
+ Explanation: The melody is more active and contains larger interval jumps, which fits a brighter and more driving direction.
+
+Card Set 4
+Style: Neutral / Lyrical
+ Preset: Piano + Soft Pad
+ Rhythm advice: Maintain the current level of complexity
+ Explanation: This melody works well with a stable and clear starting arrangement.
+
+Card Set 5
+Style: Gentle / Reflective
+ Preset: Felt Piano + Ambient Pad
+ Rhythm advice: Leave more space between phrases
+ Explanation: The melody has a calm contour and benefits from a softer and more reflective treatment.
+
+八、我建议你优先用哪个工具生成？
+我的排序建议
+第一选择：Figma Make
+最适合你当前任务。因为 Figma Make 可以：
+从 prompt 生成 functional prototype / web app
+
+
+预览 fully interactive 的结果
+
+
+在同一文件里直接编辑代码
+
+
+附加设计、图片和文本文件到 prompt
+
+
+在需要时加 backend / secret/API key
+
+
+这对你特别有利，因为你已经有很多 assignment 文本，可以直接作为上下文喂给它。
+第二选择：v0
+如果你更想快速得到一个代码化、页面结构很清楚的 web app，v0 很强。它支持：
+用自然语言生成 app
+
+
+之后继续迭代 refinement
+
+
+Design Mode 做可视化修改
+
+
+自定义 Instructions 固定项目规则
+
+
+第三选择：Lovable
+也可以用，尤其适合 prompt-first build。Lovable 官方文档很强调：
+plan before you prompt
+
+
+build by component
+
+
+使用真实内容
+
+
+让它先问 clarifying questions
+ 另外，Lovable 现在也支持 file uploads，可以把文件丢进去作为上下文。
+
+
+结论
+如果你问我现在最适合你的：
+优先 Figma Make，其次 v0。
+
+九、我建议你上传给生成工具的上下文材料
+如果你用 Figma Make，官方支持附加 designs、images 和 text files 到 prompt。
+所以我建议你准备这些材料：
+必传
+A1 的项目定义 / 用户 / 痛点
+
+
+A5 的主 workflow 选型（A+）
+
+
+A5.5 的技术架构与数据流
+
+
+5 组 comparison cards
+
+
+你 A4 的关键结果摘要
+
+
+

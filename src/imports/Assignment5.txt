@@ -1,0 +1,514 @@
+Assignment 5｜交互概念探索：3 条 workflow，选 1 条
+建议完成：4/1–4/4
+ 权重：10 分
+作业目标
+别一上来就直接做 final UI。
+ 先做 3 条不同的 steering workflow，再选 1 条。
+必做的 3 个方向
+至少做这三类之一各一版：
+概念 A：suggestion-first
+输入旋律 → AI 给 3 个方向 → 用户选方向 → 再细调
+概念 B：control-first
+输入旋律 → 先选风格/密度/配器偏好 → AI 再生成建议 → 用户比较
+概念 C：chunk / stage-based
+输入旋律 → 先决定整体 mood / instrumentation → 再决定 variation / density → 最后保存结果
+《Expressive Communication》里更 steerable 的界面之所以有效，是因为它不是“一次给一堆整段结果”，而是支持 chunk-by-chunk 和 semantically meaningful controls。这就是你这一步的理论依据。
+你要提交的内容
+3 条 workflow 图
+
+
+每条至少 4–6 个关键节点
+
+
+每条的优缺点
+
+
+最终选型理由
+
+
+Rubric（10 分）
+3 分：真的是 3 条不同逻辑，不是 1 条小变体
+
+
+2 分：每条都考虑“新手能不能理解”
+
+
+2 分：每条都能接上 AI module
+
+
+2 分：最终选型理由明确
+
+
+1 分：有删减 scope 的意识
+
+
+返工触发条件
+如果 3 条方案只是页面长得不同，但交互逻辑相同，要返工。
+
+
+
+Assignment 5｜交互概念探索：3 条 workflow，选 1 条
+一、作业目标
+本次作业的目标是：
+ 在进入 final UI 设计之前，先探索 3 条不同逻辑的 steering workflow，比较它们对零基础用户是否容易理解、是否能接上当前 AI module、以及是否适合课程项目时间范围。最后选出 1 条最适合继续推进的主方案。
+
+二、当前 AI module 对 workflow 设计的约束
+在进入三个方案之前，先明确一个前提：
+当前 AI module 更擅长什么？
+当前模型最擅长的是：
+读入短旋律
+
+
+预测中层属性
+
+
+density
+
+
+register
+
+
+motion
+
+
+再把这些属性映射成 suggestion cards
+
+
+也就是说，它本质上是：
+“旋律 → 方向性建议”模块
+而不是：
+“用户先指定很多条件 → 模型精准按条件生成”
+
+
+“模型支持复杂多轮条件控制的可控生成器”
+
+
+所以在这一步，我们要优先选择：
+更贴近当前 AI module 能力的 workflow
+而不是反过来逼 UI 迁就一个还没做出来的高级 controllable model。
+
+三、概念 A：Suggestion-first
+核心逻辑
+输入旋律 → AI 给 3 个方向 → 用户选一个 → 用户再细调
+这是最直接利用你当前 AI module 的方式。
+Implementation note:
+During melody input, users hear immediate note playback locally in the browser. After the input is completed, the system runs lightweight model inference to generate suggestion cards for comparison and refinement.
+
+Workflow 图（文本版）
+A1
+用户输入一段短旋律
+→
+A2
+系统分析旋律，并生成 3 张 suggestion cards
+ （例如不同风格方向、配器预设、节奏复杂度建议）
+→
+A3
+用户比较 3 个方向，理解差异
+ （哪一个更梦幻、哪一个更温暖、哪一个更有活力）
+→
+A4
+用户选择一个最接近自己意图的方向
+→
+A5
+用户对选中的方向做轻量微调
+ （例如：更简洁 / 更丰富，更柔和 / 更明亮）
+→
+A6
+系统输出一版音乐草稿，并支持保存/回看/继续修改
+
+对零基础用户的优点
+1. 上手负担最低
+用户不需要一开始就做很多音乐决策。
+ 他只需要：
+输入旋律
+
+
+看 3 个方向
+
+
+选一个
+
+
+再慢慢改
+
+
+这对 complete beginners 非常友好。
+2. 最符合“AI 帮我打开方向”的心智
+零基础用户最常见的问题不是“我有明确参数”，而是：
+ “我有一点感觉，但我不知道下一步该怎么办。”
+Suggestion-first 正好回答这个问题。
+3. 最符合你当前 AI module 的能力
+你现在的模型就是在做：
+ 短旋律 → direction-level suggestion
+所以这个 workflow 能几乎无缝接上当前技术成果。
+
+对零基础用户的缺点
+1. 用户最开始仍然偏被动
+第一步方向是 AI 先提，用户再选。
+ 所以它比真正强控制的系统稍微弱一点。
+2. 如果 suggestion cards 不够有区分度，体验会变平
+如果 3 张卡片太像，用户会觉得“其实也没什么可选”。
+3. 微调层必须设计得很清楚
+否则用户会有一种：
+ “我选完以后还能干嘛？”
+ 所以后续微调控件必须补上。
+
+它如何接上当前 AI module？
+接得最好。
+因为当前技术流程本来就是：
+输入旋律
+
+
+输出中层属性预测
+
+
+映射为 suggestion cards
+
+
+这几乎天然就是概念 A。
+
+这个方案最适合的项目定位
+MVP
+
+
+Sprint 速度优先
+
+
+先验证 steering interface 是否成立
+
+
+先证明“不是 prompt in / result out”
+
+
+
+四、概念 B：Control-first
+核心逻辑
+输入旋律 → 用户先选偏好 → AI 按这些偏好生成建议 → 用户比较
+这个方案里，用户的主动性更强。
+ AI 不是先提案，而是先接收用户偏好，再生成方向。
+
+Workflow 图（文本版）
+B1
+用户输入一段短旋律
+→
+B2
+用户先选择若干偏好
+ 例如：
+mood：calm / dreamy / energetic
+
+
+density：simple / moderate / rich
+
+
+instrumentation preference：soft / bright / warm
+
+
+→
+B3
+系统结合旋律与用户偏好，生成 2–3 个候选方向
+→
+B4
+用户比较这些方向，选择一个继续推进
+→
+B5
+用户继续微调细节
+→
+B6
+输出音乐草稿并保存
+
+对零基础用户的优点
+1. 主动性更强
+用户一开始就感觉：
+ “这是我选的方向，不是 AI 替我想的。”
+2. 更容易强化 authorship
+它更像“我先有想法，AI 帮我执行”。
+3. 更适合后续做个性化分支
+如果以后模型更强，这条路线很容易扩展。
+
+对零基础用户的缺点
+1. 对新手来说，起步反而更难
+完全新手常常连：
+梦幻和温暖怎么区别
+
+
+稀疏和丰富怎么选
+
+
+bright 和 soft 怎么选
+
+
+都不一定有把握。
+ 如果一开始就逼他们做太多选择，反而可能增加焦虑。
+2. 容易变成“填表单”
+如果控件太多，就会像 Loudly 一样：
+ “先填一堆参数，再出结果。”
+ 这不一定真的更有参与感。
+3. 和当前 AI module 的技术贴合度一般
+因为你现在的模型并不是一个“条件生成器”或“条件 reranker”，而是一个先读旋律再给方向的 suggestion model。
+ 如果做 B，你就需要额外设计：
+偏好与模型输出的结合逻辑
+
+
+rule-based reranking
+
+
+或人工筛选层
+
+
+所以技术上会多一层复杂度。
+
+它如何接上当前 AI module？
+能接，但不是最自然。
+接法通常会变成：
+用户先选偏好
+
+
+系统先跑模型得到基础建议
+
+
+再根据用户偏好做过滤 / 重排 / 解释调整
+
+
+也就是说，这条路线更依赖：
+规则层或 reranking 层
+而不只是你现在现成的 baseline 输出。
+
+这个方案最适合的项目定位
+中期增强版
+
+
+当你后面想强调用户主导性时
+
+
+或者当你做出更强模型后
+
+
+
+五、概念 C：Chunk / Stage-based
+核心逻辑
+输入旋律 → 先定整体 mood / instrumentation → 再定 variation / density → 最后输出与保存
+这个方案最强调“逐步创作”和“分阶段 steering”。
+
+Workflow 图（文本版）
+C1
+用户输入一段短旋律
+→
+C2
+系统先给出 2–3 个整体方向
+ 用户先决定更偏哪种大方向
+ （例如 calm / dreamy / energetic）
+→
+C3
+进入第二阶段
+ 用户再决定 instrumentation family
+ （例如 piano-based / strings-based / synth-based）
+→
+C4
+进入第三阶段
+ 用户再决定 variation / density / movement
+ （例如 simpler / richer / more active）
+→
+C5
+系统生成一版综合建议草稿
+→
+C6
+用户保存、回看或再调整某一阶段
+
+对零基础用户的优点
+1. 最符合“我一步步做出来的”感觉
+这是三条路线里，最强的渐进式共创体验。
+2. 最符合《Expressive Communication》的 steering 精神
+因为它不是一次性给结果，而是：
+分阶段
+
+
+分语义层
+
+
+分决策层
+
+
+这和文献里强调的 chunk-by-chunk、semantic control 最一致。
+3. 最容易强化 narrative 感
+用户会清楚感到：
+ “我先定了氛围，再定配器，再定动态感。”
+
+对零基础用户的缺点
+1. 步骤最多
+对于完全新手来说，太多阶段也可能疲劳。
+2. 界面复杂度更高
+它意味着你至少要设计 3 层决策页面或 3 段核心状态流。
+3. 对当前 AI module 的要求比 A 更高
+因为你最好在每个阶段都让系统“看起来真的有响应”，
+ 否则就会变成假分步：
+第一步选 mood
+
+
+第二步选 instrument
+
+
+第三步选 density
+ 但实际上都是静态规则，那会显得空。
+
+
+
+它如何接上当前 AI module？
+理论上接得很好，现实上比 A 更重。
+因为当前 AI module 的 3 个预测标签：
+density
+
+
+register
+
+
+motion
+
+
+其实很适合做阶段 2、阶段 3 的支撑。
+ 但问题是：
+ 你还缺一个更强的 整体风格层（mood-level） 支撑。
+所以如果现在做 C，最可能的情况是：
+第一阶段偏 UI / rule-based
+
+
+后两阶段接当前 AI module
+
+
+这不是不能做，但会增加系统设计复杂度。
+
+这个方案最适合的项目定位
+更强的 final prototype
+
+
+更有作品集张力
+
+
+更能体现 “I made this step by step”
+
+
+
+六、三条 workflow 的本质区别
+这一部分很重要，因为 rubric 明确要求：
+ 不能只是同一条逻辑的小变体。
+所以我帮你把三者的本质差异钉死：
+A｜Suggestion-first
+决策权的起点在 AI
+AI 先提出方向，用户再筛选和 refine。
+B｜Control-first
+决策权的起点在用户
+用户先表达偏好，AI 再响应并生成候选。
+C｜Chunk / Stage-based
+决策权不是一次给完，而是分阶段展开
+用户与 AI 共同在多个阶段逐步推进创作。
+所以这三条不是换皮，而是：
+决策起点不同
+
+
+用户负担不同
+
+
+AI 接入点不同
+
+
+产品节奏不同
+
+
+
+七、对比总结表（文字版）
+概念 A｜Suggestion-first
+新手理解成本：最低
+
+
+与当前 AI module 贴合度：最高
+
+
+实现难度：最低
+
+
+创作主导感：中等偏高
+
+
+风险：建议卡可能不够有区分度
+
+
+概念 B｜Control-first
+新手理解成本：中等偏高
+
+
+与当前 AI module 贴合度：中等
+
+
+实现难度：中等
+
+
+创作主导感：高
+
+
+风险：容易变成参数表单
+
+
+概念 C｜Chunk / Stage-based
+新手理解成本：中等
+
+
+与当前 AI module 贴合度：中高
+
+
+实现难度：最高
+
+
+创作主导感：最高
+
+
+风险：流程过长、界面过重
+
+
+
+八、最终选型建议
+我的推荐：选 A 作为主方案，吸收 C 的优点
+也就是：
+主选：Suggestion-first
+但在后半段微调里加入一点 stage-based 的分步感。
+你可以把这个叫做：
+A+ 方案：Suggestion-first with light stage refinement
+
+九、为什么我不建议你现在直接选 B 或纯 C？
+不选 B 作为主方案的原因
+因为你现在的模型不是 conditional model。
+ 如果硬做 control-first，你就得在技术上增加很多额外逻辑，时间成本不划算。
+不选纯 C 作为主方案的原因
+因为它虽然研究味和作品集张力很强，但对当前项目阶段来说有点重。
+ 你现在最稳的路线是：
+ 先做出一个成立的、能跑的 steering workflow，而不是一次把所有阶段都做满。
+
+十、推荐主方案：A+ 的具体样子
+Workflow 图（最终推荐版）
+1
+用户输入一段短旋律
+→
+2
+系统生成 3 张 suggestion cards
+ （不同风格 / 配器预设 / 节奏复杂度方向）
+→
+3
+用户比较并选择一个最接近目标的方向
+→
+4
+进入 refinement stage
+ 用户调整：
+simpler / richer
+
+
+softer / brighter
+
+
+more stable / more active
+
+
+→
+5
+系统更新建议并生成音乐草稿
+→
+6
+用户保存、回看或继续微调
+

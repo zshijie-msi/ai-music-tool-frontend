@@ -1,0 +1,486 @@
+Assignment 2｜Related Work + 竞品分析
+建议完成：3/21–3/25
+ 权重：12 分
+作业目标
+建立你的设计立场：
+ 不是我随便想到一个 AI 音乐工具，而是我看过现有方法后，有意识地选择做 steering interface。
+你要完成的两个部分
+Part A：文献 related work
+最少 4 篇，建议 5 篇。
+ 其中这两篇必须进来：
+Draw and Listen!：支持“新手友好的低门槛控制维度”
+
+
+Expressive Communication：支持“steering interface + creator/listener 双重评估”
+
+
+你对这两篇至少要提炼出：
+新手输入不一定要乐谱级精确输入
+
+
+控制维度要语义化、可理解
+
+
+一次性给很多结果让用户挑，是弱 baseline
+
+
+更好的评估不能只看 self-report，要加 listener judgement
+
+
+Part B：竞品分析
+目标做 5 个，不要低于 4 个。
+推荐维度
+输入方式
+
+
+控制粒度
+
+
+是否一步到位
+
+
+是否支持局部调整
+
+
+是否解释 AI 为什么这样建议
+
+
+是否适合完全新手
+
+
+用户更像 creator 还是 selector
+
+
+建议最后产出
+一张对比表 + 1 页 insight synthesis。
+ 最后必须落到 3–5 个 beginner pain points 上。
+Rubric（12 分）
+3 分：5 个竞品分析完成，维度统一
+
+
+2 分：至少 4 篇 related work 有可复述 insight
+
+
+2 分：能清楚区分 one-shot / radio-like 与 steering workflow
+
+
+2 分：输出 3–5 个新手痛点，不是零散观察
+
+
+2 分：最后能引出你自己的机会点
+
+
+1 分：文献与竞品之间有联系，而不是两堆材料
+
+
+返工触发条件
+如果竞品分析只停留在“功能罗列”，没有总结出你为什么做现在这条 workflow，就返工。
+
+
+
+Assignment 2｜Related Work + 竞品分析
+一、作业目标
+本作业的目标不是简单罗列“市面上有哪些 AI 音乐工具”，而是建立本项目的设计立场：
+我不是随便想到要做一个 AI 音乐工具，而是在看过已有研究与现有产品后，有意识地选择做一个面向零基础用户的 steering interface（可操控/可引导式交互界面）。
+
+Part A｜Related Work
+我这里采用 5 篇文献，满足“至少 4 篇，建议 5 篇”的要求。
+ 其中前两篇是你老师已经明确给你的核心文献，后三篇是我认为最适合给你当前项目补设计与技术地基的 supporting work。
+
+1. Draw and Listen! A Sketch-Based System for Music Inpainting
+论文在做什么
+这篇论文做的是一个交互式音乐补全系统：给定前后已知小节，用户通过手绘曲线输入旋律走势和音符疏密，系统据此补出中间缺失的小节。它最关键的贡献不是“又做了一个生成模型”，而是把用户输入拆成普通人也能理解的相对控制维度：relative pitch、relative rhythm 和 context。作者明确说，他们的目标是让用户不需要理解乐谱，只需要对旋律形状有一个大致想法，就可以参与创作。
+对我项目最重要的启发
+这篇论文最支持我项目的一点是：
+新手输入不一定要是乐谱级、乐理级的精确输入。
+换句话说，用户不需要一上来就会写和弦、调式、复杂时值，也可以通过更直觉的控制方式参与生成。
+ 论文还说明，系统把 melody 拆成 relative pitch、relative rhythm 和由上下文推断的音乐信息，这种“用户给相对趋势，系统补专业细节”的思路，本质上就是一种新手友好的中层控制设计。
+与我项目的关系
+我的项目虽然不打算直接照搬“自由手绘曲线”作为主输入，但会继承这篇论文最核心的方法论：
+把复杂模型能力转译成零基础用户也能理解的控制维度。
+对我来说，这意味着：
+输入不必过度专业化
+
+
+控制维度要语义化、可理解
+
+
+AI 负责补细节，而不是用户负责把所有音乐决策一次输完
+
+
+
+2. Expressive Communication: A Common Framework for Evaluating Developments in Generative Models and Steering Interfaces
+论文在做什么
+这篇论文提出了一个非常适合我项目的评估框架。作者指出，过去 ML 社区常用的 generative model 评估很多停留在 proxy metrics，而 HCI 社区则更常测 creator 的主观感受；但如果一个工具真的是给创作者用的，仅仅看 self-report 不够，还应该看外部听众是否真的能从最终作品里听出目标情绪/意象，以及作品是否更 musical。
+它最重要的两个观点
+第一，论文把常见的“一次生成很多结果再挑一个”的方式定义成一种 baseline，也就是 Radio Interface。而对比之下，Steering Interface 支持分块式、逐步式、带语义控制的创作。
+第二，论文发现更 steerable 的界面会显著提升 creator 的 ownership、control、efficacy，而且对 listener 侧的结果判断也有积极影响；作者甚至明确指出，更好的界面和更好的模型是互补的，但界面上的 steering 带来的 empowerment 提升非常明显。
+对我项目的直接启发
+这篇论文几乎就是我当前项目的理论背书。
+ 它直接支持我以下四个判断：
+一次性给很多结果让用户挑，是弱 baseline。
+
+
+我应该做的是 steering interface，而不是另一个黑箱生成器。
+
+
+评估不能只看“用户觉得好不好用”，还要加 listener judgement。
+
+
+设计目标不只是效率，还包括 ownership / authorship / control。
+
+
+
+3. The Bach Doodle: Approachable Music Composition with Machine Learning at Scale
+论文在做什么
+Bach Doodle 是一个非常好的“面向大众的新手音乐 AI”案例。它用一个简化的五线谱输入界面，让用户输入单声部旋律，然后点击 Harmonize 让系统做巴赫风格和声化。论文特别强调，它的目标之一是让用户觉得自己是在与机器学习模型协作，而不是被一个“魔法黑箱”替代；同时为了适配更广泛的人群，它把高级功能隐藏起来，让核心体验尽量简单。
+对我项目的启发
+Bach Doodle 对我有三层启发：
+第一，它说明简化后的音乐输入界面是可以被普通用户快速学会的。论文提到，他们发现只要输入界面足够简单、反馈足够直接，即使用户不熟悉西方乐谱，也能很快适应。
+第二，它说明面向新手的系统应该把“advanced mode”藏起来，而不是把所有能力一次堆给用户。
+第三，它说明大规模新手参与的音乐 AI 工具，其价值不一定在于“最专业”，而在于低门槛 + 快速反馈 + 鼓励多次试验。Bach Doodle 的数据显示，用户在 80% 的 session 中会探索多个 harmonization，说明“多次比较、快速重试”本身就是一种很关键的交互模式。
+与我项目的关系
+我的项目不做 Bach 风格和声化，也不打算强制采用传统五线谱界面，但它提醒我：
+零基础用户需要的是低摩擦输入 + 快速 AI 反馈 + 渐进式控制。
+
+4. Piano Genie
+论文在做什么
+Piano Genie 想解决的是：大多数人都喜欢音乐，但很少人能真正“参与式地”演奏音乐。与其让非专业用户去学完整钢琴，或者按一下按钮就自动生成整首歌，Piano Genie 选择了一条中间道路：让用户只控制 8 个按钮，由神经网络把这 8 个按钮映射成 88 键钢琴表演。作者明确说，他们不想让系统变成“按一下就出整首歌”，因为那会削弱用户的 ownership。
+对我项目的启发
+Piano Genie 对我最重要的启发是：
+好的新手音乐 AI，不是简单帮用户省掉一切，而是替用户保留一种“我在参与”的手感。
+论文中，Piano Genie 相比一个纯 language-model baseline，让用户感觉更有控制；而与完全确定性的 G-major scale 相比，它又更有趣、更有表现性。作者的 user study 还表明，所有 8 位用户都觉得 Piano Genie 比纯语言模型 baseline 更可控。
+与我项目的关系
+这和我项目的目标完全一致：
+ 我不是想做一个“帮新手一键做歌”的系统，而是想做一个：
+既降低门槛，又保留创作参与感与主导感的 AI 音乐工具。
+
+5. Anticipation-RNN
+论文在做什么
+Anticipation-RNN 讨论的是：传统从左到右的 sequence generation 虽然自然，但不适合真实创作，因为真实作曲往往是迭代式、非线性、带约束的。作者直接指出，很多生成模型只允许用户给一个 seed，之后用户只能接受结果或者重新生成，这种限制会削弱创作中的主动性。为了解决这个问题，他们提出 anticipation-RNN，让模型在生成时就能考虑用户定义的 unary constraints，并保持较快的交互速度。
+对我项目的启发
+这篇论文对我最重要的启发是：
+“接受/重抽”不是好的交互终点，带约束的可控生成才更接近真正的创作。
+它还说明，如果约束设计得合理，interactive generation 可以兼顾速度与可控性，不一定非要走一个特别重、特别慢的模型路线。
+与我项目的关系
+这正好支撑我后面技术模块的定位：
+ 我并不需要从零做一个巨大的 text-to-music 模型；我更需要一个轻量、可比较、能接入 steering workflow 的 AI suggestion module。
+
+Part A 小结：我的 Related Work 立场
+基于这 5 篇文献，我目前形成的设计立场是：
+1. 面向新手的音乐 AI 输入不应默认专业化
+新手不一定要会写乐谱、和弦、调式，才能参与音乐生成；输入应尽量降低为直觉化、语义化、相对化的控制。
+2. 生成系统不应只给结果，更应给“可参与的过程”
+如果用户只是“看结果、挑结果”，那么 ownership 和 control 都会很弱；更好的方式是逐步比较、逐步收缩方向、逐步 refine。
+3. 好的 beginner tool 需要隐藏复杂性，而不是展示全部能力
+advanced mode 可以有，但不应成为核心路径；核心路径应该是低门槛、快速反馈、允许反复尝试。
+4. evaluation 不能只看 creator 自评
+对 generative creative tool 来说，更完整的评估应同时包含：
+creator side：control、ownership、ease of use
+
+
+listener side：是否真的传达了目标 mood / style，是否更 musical
+
+
+
+Part B｜竞品分析
+下面我选了 5 个竞品。
+ 它们不全都和你未来的产品形态 100% 一样，但很适合作为**“新手 AI 音乐生成/编辑体验”的参照系**：
+Suno
+
+
+Udio
+
+
+Stable Audio
+
+
+Loudly
+
+
+Boomy
+
+
+
+竞品 1｜Suno
+事实观察
+Suno 当前支持音频上传，并可在上传后执行 Extend；它也把 Remix 定义为 Cover、Extend、Reuse、Speed 等多个再创作流程，还支持 Persona，用来保存一首歌的“风格/人声/氛围”并在新作品中复用。
+对照分析
+输入方式：文本、歌词、音频上传
+
+
+控制粒度：中等，已经不只是单纯 prompt，但控制仍主要围绕已有作品的二次变体
+
+
+是否一步到位：偏是，初始生成仍带明显 one-shot 色彩
+
+
+是否支持局部调整：有 Extend / Remix / Cover，但对“初学者逐步理解为什么变成这样”支持有限
+
+
+是否解释 AI 为什么这样建议：弱
+
+
+是否适合完全新手：上手快，但“会产出结果”不等于“会建立创作路径”
+
+
+用户更像 creator 还是 selector：介于两者之间，但早期阶段仍偏 selector
+
+
+我对它的结论
+Suno 已经比最原始的“纯文本到歌”更强，但它的设计重点仍更偏快速产出和二次改造，不够强调“帮助零基础用户逐步理解并塑造音乐”的过程。
+
+竞品 2｜Udio
+事实观察
+Udio 支持上传自己的音频，然后执行 Extend、Inpaint、Session、Remix、Style 等多种操作；它还提供 guidance tags 和自定义歌词编辑，说明它在“从已有素材继续创作/编辑”的方向上已经比很多一键生成工具更细。
+对照分析
+输入方式：文本、歌词、音频上传
+
+
+控制粒度：较高，尤其在 remix、variance、section、inpaint 上
+
+
+是否一步到位：不是完全一步到位，已有编辑感
+
+
+是否支持局部调整：强，特别是 inpaint 和 session/workflow editor
+
+
+是否解释 AI 为什么这样建议：弱
+
+
+是否适合完全新手：功能强，但学习成本也更高
+
+
+用户更像 creator 还是 selector：比 Suno 更偏 creator，但仍然默认用户已经具备一定“编辑意识”
+
+
+我对它的结论
+Udio 是一个很重要的参照物，因为它说明 AI 音乐工具可以不只是一键生成，也可以走向编辑与局部控制。但它的问题在于：
+ 它更像一个“更强大的 AI 音乐编辑器”，而不完全是一个“专门为零基础用户设计的逐步共创工具”。
+
+竞品 3｜Stable Audio
+事实观察
+Stable Audio 的官方界面把输入面板定义得很清楚：有 text prompt、input audio、model selection、prompt library、prompt strength 等；预览页还支持复制 prompt、再次作为 input audio 使用、分享、下载、评分。它也支持上传自己的音频，并强调这些上传内容不会被用于训练模型。
+对照分析
+输入方式：文本 + 输入音频
+
+
+控制粒度：中等，主要是 prompt 与模型参数层的控制
+
+
+是否一步到位：偏是
+
+
+是否支持局部调整：相对有限，更多是“生成—再生成—把结果当输入继续生成”
+
+
+是否解释 AI 为什么这样建议：弱
+
+
+是否适合完全新手：界面整洁，但依然比较“参数式”
+
+
+用户更像 creator 还是 selector：偏 selector / prompt operator
+
+
+我对它的结论
+Stable Audio 的长处是流程清爽、模型与提示关系明确，但它更接近“生成工具”而不是“教学型/引导型新手共创工具”。
+ 对我的项目来说，它提醒我：只把 prompt 和 input audio 放得更漂亮，并不等于真的解决了新手创作路径问题。
+
+竞品 4｜Loudly
+事实观察
+Loudly 的特点非常适合做对照：它不是只让用户写 prompt，而是让用户先构建一个“song formula”，可以直接选 genre、duration、energy、instruments、structure、tempo、key，点击后会返回 3 个候选结果；它还支持上传音频片段后再生成 3 个 remix 变体，并通过 entropy 等项控制“保留还是变形”的程度。
+对照分析
+输入方式：参数式表单 + 文本 + 音频片段
+
+
+控制粒度：高于多数 one-shot 工具
+
+
+是否一步到位：不是完全一步到位，更像“配置—生成—挑选”
+
+
+是否支持局部调整：中等，虽然能上传音频和做变体，但仍偏系统先给结果
+
+
+是否解释 AI 为什么这样建议：中弱
+
+
+是否适合完全新手：比很多 prompt-only 工具更友好，因为参数名比较直白
+
+
+用户更像 creator 还是 selector：两者之间，但已向 creator 迈进一步
+
+
+我对它的结论
+在 5 个竞品里，Loudly 其实最接近我想研究的问题：
+ 它已经把一些复杂生成控制翻译成更可理解的参数。但它仍然没有完全解决“新手如何逐步形成自己的音乐意图”这个问题，因为它更像是在填写一个配置表，而不是在引导用户建立创作过程。
+ 这对我很有启发：我的项目不能只做“更多参数”，而要做“更好的逐步引导”。
+
+竞品 5｜Boomy
+事实观察
+Boomy 的官方说明很明确：它面向 first-time music maker，流程是点击 Create → Song → 选择 Style → 选择自定义设置 → Create Song，然后系统会生成多个 song options 供用户 reject、save 或 customize。它还支持添加自定义 vocals 或自动生成 vocal line。
+对照分析
+输入方式：风格选择 + 少量自定义设置
+
+
+控制粒度：低到中等
+
+
+是否一步到位：强，是典型的“先出多个结果，再挑一个”
+
+
+是否支持局部调整：有一定 customization，但不是它的核心优势
+
+
+是否解释 AI 为什么这样建议：弱
+
+
+是否适合完全新手：非常适合
+
+
+用户更像 creator 还是 selector：明显偏 selector
+
+
+我对它的结论
+Boomy 很适合作为 baseline，因为它几乎代表了新手 AI 音乐工具中最典型的逻辑：
+低门槛、快出结果，但创作过程中的主导感较弱。
+它说明“适合新手”和“能让新手感觉自己在创作”不是一回事。
+
+文本对比表
+1. 输入方式维度
+Suno：文本 / 歌词 / 音频上传，适合快速生成与二创。
+
+
+Udio：文本 / 歌词 / 音频上传，且上传后可做 inpaint、session、remix、style。
+
+
+Stable Audio：文本 + 输入音频 + prompt strength + model 选择。
+
+
+Loudly：参数配置表 + 文本 + 音频片段。
+
+
+Boomy：风格选择 + 少量设置，最轻量。
+
+
+2. 控制粒度维度
+最高：Udio、Loudly
+
+
+中等：Suno、Stable Audio
+
+
+最低：Boomy
+ 这个排序不是在比“谁技术最强”，而是在比“用户可见的中间层控制有多少”。支持判断的依据是：Udio 明确提供 inpaint、session、variance 等编辑类操作；Loudly 允许用户在生成前配置 genre、energy、tempo、structure、key、instruments；Boomy 的核心仍是选 style 后再在多个结果中选择。
+
+
+3. one-shot vs steering
+更接近 one-shot / radio-like：Boomy、早期使用方式下的 Suno、Stable Audio
+
+
+开始具有 steering 特征：Udio、Loudly
+ 也就是说，现在市面上的工具并不是非黑即白，但总体上仍然是：
+ 输出型工具远多于引导型工具。
+ 这正好对应《Expressive Communication》对 Radio Interface 与 Steering Interface 的区分。
+
+
+4. 对完全新手的友好度
+最容易上手：Boomy、Suno
+
+
+参数更明确但稍复杂：Loudly
+
+
+能力更强但学习成本更高：Udio
+
+
+界面清楚但仍偏生成工具心智：Stable Audio
+
+
+5. creator vs selector
+更偏 selector：Boomy、Suno、Stable Audio
+
+
+更偏 creator / editor：Udio、Loudly
+ 但即使在后两者里，也仍然没有一个工具真正把重点放在：
+ 帮助零基础用户一步步形成“这是我做出来的音乐”这种主导感。
+
+
+
+Insight Synthesis｜从文献与竞品共同归纳出的 beginner pain points
+下面这部分是本作业最关键的，不是“功能罗列”，而是为什么我现在必须做这条 workflow。
+痛点 1：多数工具让新手“很快得到结果”，但不一定“真正进入创作”
+Boomy 和很多典型生成工具都擅长快速给结果，这对新手当然友好；但从创作体验角度看，这容易让用户停留在 selector 的位置，而不是 creator 的位置。这个问题与《Expressive Communication》里对 Radio Interface 的批评是一致的：大量生成后再筛选，本质上仍是一种弱控制基线。
+痛点 2：很多工具提供了更多编辑能力，但没有专门为“完全新手”组织学习路径
+Udio 和 Loudly 已经在往更可控的方向走，但它们更多是在提供功能，而不是在提供一套专门面向零基础用户的“渐进式创作引导”。这意味着：功能越强，不一定越容易让新手建立 confidence 和 authorship。
+痛点 3：控制维度经常存在，但不够“语义可理解”
+很多系统已经支持 prompt、audio upload、tempo、variance、prompt strength 等控制，但这些控制并不总是能被新手理解为“我现在在塑造什么”。相比之下，文献中更有效的路径是：把控制转译成普通人能理解的中层维度，比如 contour、density、semantic filtering、逐块选择。
+痛点 4：市面上的产品很少把“listener side evaluation”纳入设计逻辑
+绝大多数消费级 AI 音乐工具更强调“快”“多”“能出歌”，但不太强调一个更研究化的问题：
+ 作品是否真的更好地传达了目标情绪/风格？
+ 《Expressive Communication》提醒我，若要证明一个音乐共创工具真的更有效，就不能只看 self-report，还要看 listener judgement。
+痛点 5：新手真正缺的不是“结果”，而是“从模糊灵感到第一版草稿的桥”
+从 Bach Doodle、Piano Genie 到 Draw and Listen!，这些研究型系统其实都在回答同一件事：
+ 如何给非专业用户一个足够轻、足够直觉，但又能保留参与感的创作入口。
+ 而当前主流产品更多在优化生成效率或编辑能力，较少围绕“零基础用户的创作桥梁”来设计。
+
+最终机会点（Opportunity）
+基于上面的 related work 和竞品分析，我项目的机会点可以明确写成：
+机会点 1
+做一个面向 complete beginners 的 steering interface，而不是再做一个 prompt-in / result-out 工具。
+机会点 2
+将 AI 输出组织成可理解的中层控制维度，例如：
+配器方向
+
+
+风格方向
+
+
+节奏疏密
+
+
+变化程度
+ 而不是只给一个“最终作品”让用户试听。
+
+
+机会点 3
+把 workflow 设计成：
+ 短旋律输入 → AI 给 2–3 个方向建议 → 用户比较 → 用户微调 → 输出草稿
+ 从而强化 authorship、control、participation。
+机会点 4
+在 evaluation 中同时包含：
+creator side：control / ownership / ease of use
+
+
+listener side：mood / style communication、musicality
+ 这样项目会比普通 app 原型更像一个完整研究型课程项目。
+
+
+
+最后一段：我的设计立场
+综合已有研究和现有产品分析，我的设计立场是：
+当前多数 AI 音乐工具已经证明了“生成结果”很容易做到，但“帮助零基础用户进入创作过程”仍然没有被充分解决。与其继续做一个更快、更强的一键生成器，我更有必要设计一个面向 complete beginners 的 steering interface：它以短旋律为起点，将 AI 建议组织为可理解、可比较、可微调的中层控制选项，帮助用户从模糊灵感逐步走向可用的音乐草稿，并在过程中建立更强的 control、ownership 和 authorship。
+References
+Benetatos, C., & Duan, Z. (2022). Draw and listen! A sketch-based system for music inpainting. Transactions of the International Society for Music Information Retrieval, 5(1), 141–155. https://doi.org/10.5334/tismir.128
+
+Boomy. (2023, July 31). How do I create a song on Boomy? Boomy Help Center. https://support.boomy.com/hc/en-us/articles/13365170872077-How-do-I-create-a-song-on-Boomy
+
+Donahue, C., Simon, I., & Dieleman, S. (2019). Piano Genie. In Proceedings of the 24th International Conference on Intelligent User Interfaces (pp. 160–164). Association for Computing Machinery. https://doi.org/10.1145/3301275.3302288
+
+Hadjeres, G., & Nielsen, F. (2020). Anticipation-RNN: Enforcing unary constraints in sequence generation, with application to interactive music generation. Neural Computing and Applications, 32, 995–1005. https://doi.org/10.1007/s00521-018-3868-4
+
+Huang, C.-Z. A., Hawthorne, C., Roberts, A., Dinculescu, M., Wexler, J., Hong, L., & Howcroft, J. (2019). The Bach Doodle: Approachable music composition with machine learning at scale. In Proceedings of the 20th International Society for Music Information Retrieval Conference (pp. 793–800).
+
+Loudly. (n.d.). AI music generator. Retrieved March 20, 2026, from https://www.loudly.com/ai-music-generator
+
+Louie, R., Engel, J. H., & Huang, C.-Z. A. (2021). Expressive communication: A common framework for evaluating developments in generative models and steering interfaces. arXiv. https://arxiv.org/abs/2111.14951
+
+Stable Audio. (n.d.). Interface. Stable Audio User Guide. Retrieved March 20, 2026, from https://stableaudio.com/user-guide/interface
+
+Suno. (2025, May 30). How to use: Audio uploads. Suno Help Center. https://help.suno.com/en/articles/6141569
+
+Udio. (n.d.). Create music with your own audio. Udio Help Center. Retrieved March 20, 2026, from https://help.udio.com/en/articles/10754328-create-music-with-your-own-audio
+
+

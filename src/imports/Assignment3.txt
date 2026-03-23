@@ -1,0 +1,951 @@
+Assignment 3｜AI Module 规格说明书
+建议完成：3/25–3/28
+ 权重：10 分
+作业目标
+把 technical 部分钉死。
+ 你不是“做个 AI app”，而是要明确：你的 AI module 究竟输入什么、输出什么、凭什么可做。
+你要提交的内容
+输入定义
+
+
+目前主推：short melody note sequence / symbolic MIDI
+
+
+输出定义
+
+
+arrangement / instrumentation / style suggestions
+
+
+数据表示
+
+
+piano roll / note sequence / token sequence，三选一或组合
+
+
+模型路线
+
+
+baseline 1
+
+
+baseline 2（可选）
+
+
+训练与推理范围
+
+
+你只做轻量 suggestion module，不做 full-song generation
+
+
+失败备选方案
+
+
+如果模型效果一般，如何降级为规则+模型混合方案
+
+
+你要写清楚的一句话
+输入：短旋律 MIDI 或 note sequence
+ 输出：面向新手的配器 / 风格方向建议
+ 价值：把黑箱模型输出转化成可比较、可微调的创作路径
+Rubric（10 分）
+2 分：输入定义清楚，不再模糊
+
+
+2 分：输出定义清楚，且和界面强相关
+
+
+2 分：说明为什么这个模块适合“complete beginners”
+
+
+2 分：有主路线和降级路线
+
+
+1 分：数据/模型选择有理由
+
+
+1 分：明确不做 full text-to-music 大模型
+
+
+返工触发条件
+如果你还在“输入什么都可以”“输出什么都可以”，说明项目没有工程化，必须返工。
+
+
+
+Assignment 3｜AI Module 规格说明书
+0. 模块工作标题
+面向零基础用户的旋律到风格/配器建议模块
+ 英文可写作：
+Lightweight Melody-to-Style/Arrangement Suggestion Module for Beginner Music Co-Creation
+
+1. 你要写清楚的一句话
+输入：一段简短、单声部的 symbolic melody（MIDI 或 note sequence）
+ 输出：面向零基础用户的风格方向、配器预设和节奏复杂度建议
+ 价值：把原本黑箱式的音乐生成结果，转化为可比较、可微调、可解释的创作路径。
+这句话就是这次 Assignment 3 的核心。
+
+2. 模块定位：它到底在整个系统里扮演什么角色？
+这个 AI module 不是一个完整的“生成一首歌”的模型。
+ 它在整个产品里的角色是：
+音乐创作建议引擎（suggestion engine）
+它接收用户输入的一小段旋律，然后输出几组适合新手理解和操作的建议，例如：
+更适合哪种风格方向
+
+
+更适合哪种配器预设
+
+
+节奏应该更丰富还是更简洁
+
+
+哪个方向更平稳、哪个方向更有变化
+
+
+所以它的职责不是：
+直接替用户写完一首歌
+
+
+生成最终可发行音频
+
+
+输出专业乐谱编排
+
+
+它的职责是：
+给新手一个“下一步该怎么走”的方向
+
+
+让用户感觉自己在一步步塑造音乐，而不是只在刷结果
+
+
+
+3. 输入定义（必须钉死，不模糊）
+3.1 主输入形式
+短旋律 symbolic melody
+具体定义为：
+输入类型：MIDI 或内部 note sequence
+
+
+声部类型：单声部（monophonic）
+
+
+长度范围：1–2 小节
+
+
+推荐标准长度：2 小节
+
+
+节拍假设：MVP 版本先默认 4/4
+
+
+量化粒度：16 分音符网格
+
+
+输入方式：来自 UI 的简化音符输入界面，不接语音、不接视频、不接自由绘图
+
+
+
+3.2 为什么这样定义？
+因为你现在最怕的是输入范围太大。
+如果你把输入定义成：
+“都可以”
+
+
+“文本也行，哼唱也行，画图也行，上传视频也行”
+
+
+那这个项目就立刻失控了。
+所以当前版本必须把输入固定成：
+用户输入一段 1–2 小节的单声部旋律
+这是最稳的。
+
+3.3 输入格式细化
+为了让训练和推理都稳定，建议把输入进一步标准化为：
+pitch：MIDI note number
+
+
+onset：量化到 16 分音符
+
+
+duration：量化到 16 分音符
+
+
+velocity：MVP 可先忽略或标准化
+
+
+休止：允许，但简化处理
+
+
+
+3.4 MVP 输入约束
+当前阶段建议限制为：
+音域：C3–C6
+
+
+最长音符数量：32 个 step 内
+
+
+不支持和弦输入
+
+
+不支持 polyphonic piano-roll
+
+
+不支持变拍号
+
+
+这样做的原因不是“功能弱”，而是：
+ 你在做一个新手入口，不是在做完整作曲环境。
+
+4. 输出定义（必须和界面强相关）
+你这个 AI module 的输出，不能是模糊的 hidden vector，也不能是“给一个模型分数完事”。
+ 它必须直接服务 UI。
+所以我建议你的输出定义为：
+输出 3 张 suggestion cards（建议卡片）
+每张卡片代表一个 AI 建议方向。
+
+4.1 每张建议卡片包含什么？
+A. 风格方向（style direction）
+例如：
+温暖（warm）
+
+
+梦幻（dreamy）
+
+
+平静（calm）
+
+
+神秘（mysterious）
+
+
+明亮（bright）
+
+
+有活力（energetic）
+
+
+B. 配器预设（instrumentation preset）
+例如：
+Piano + Soft Pad
+
+
+Warm Strings
+
+
+Bright Pluck + Synth
+
+
+Soft Bell + Pad
+
+
+Piano Trio Lite
+
+
+注意：
+ 这里先输出的是配器预设，不是完整编曲结果。
+ 这是很重要的 scope 控制。
+C. 节奏复杂度建议（rhythmic density suggestion）
+例如：
+保持简洁
+
+
+稍微丰富一点
+
+
+增加变化
+
+
+降低复杂度
+
+
+D. 变化程度建议（variation level）
+例如：
+保守延展
+
+
+中等变化
+
+
+更大胆的发展
+
+
+E. 解释性文字（short explanation）
+例如：
+“你的旋律音域偏高、节奏较稀疏，因此适合更轻盈、留白更多的配器。”
+
+
+“这段旋律级进较多，适合平稳、温暖的铺底方向。”
+
+
+这一项非常重要，因为它直接服务 transparency。
+
+4.2 输出形式为什么这样设计？
+因为你项目的重点不是单纯“给答案”，而是：
+把 AI 输出变成用户能理解、能比较、能继续操作的中层创作对象
+所以输出不能只是一行标签或一个概率分布，必须是：
+可视化的建议方向
+
+
+能被比较
+
+
+能被进一步微调
+
+
+能被解释
+
+
+
+5. 数据表示（最终建议）
+你作业要求里给了：
+piano roll
+
+
+note sequence
+
+
+token sequence
+
+
+我不建议三选一硬选，我建议你最终采用：
+主表示：token sequence
+辅表示：handcrafted symbolic features
+也就是：
+最终方案 = token sequence + 辅助特征
+
+5.1 为什么主表示选 token sequence？
+因为它最适合你后续做轻量 transformer / sequence encoder。
+你当前输入本质上是一个有时间顺序的旋律序列，所以 token sequence 很自然。
+ 可以把每个 note event 表示成类似：
+NOTE_ON_pitch
+
+
+DURATION_x
+
+
+TIME_SHIFT_x
+
+
+或者更简单一点：
+pitch token
+
+
+duration token
+
+
+rest token
+
+
+这样你后续做编码器最顺。
+
+5.2 为什么还要保留辅助特征？
+因为你这个项目最终不是纯模型比赛，而是要给用户可解释建议。
+所以你还需要一组 symbolic features，用来：
+做 baseline
+
+
+做 rule mapping
+
+
+做解释性文案
+
+
+做 debug
+
+
+做错误分析
+
+
+
+5.3 建议提取的辅助特征
+最推荐这些：
+旋律形状类
+平均音高
+
+
+音域跨度
+
+
+上行/下行比例
+
+
+大跳比例
+
+
+级进比例
+
+
+节奏类
+note density
+
+
+平均时值
+
+
+时值方差
+
+
+休止比例
+
+
+syncopation proxy（可选）
+
+
+变化类
+重复音比例
+
+
+motif 重复程度
+
+
+interval variance
+
+
+表现倾向类
+register（低/中/高）
+
+
+movement smoothness
+
+
+activity level
+
+
+这些特征不仅能给模型用，更重要的是能给你 UI 里的解释文本用。
+
+6. 关键现实问题：MAESTRO 数据集的限制，以及我们怎么绕开
+这一点我必须替你钉清楚，因为这是整个技术方案最聪明也最现实的地方。
+6.1 MAESTRO 的问题
+你现在手头的 MAESTRO MIDI 非常好，但它主要是：
+钢琴演奏 MIDI
+
+
+不是多乐器编曲数据
+
+
+没有直接给你“这段旋律对应 strings 还是 synth”的配器标签
+
+
+所以：
+你不能天真地说“我直接用 MAESTRO 训练一个 instrumentation classifier”
+这在当前数据条件下是不成立的。
+
+6.2 我们怎么解决？
+我们把问题重新定义成：
+模型直接预测的不是“最终乐器名”
+而是预测一组中层音乐属性（style profile）
+例如：
+energy
+
+
+density
+
+
+register
+
+
+smoothness
+
+
+variation tendency
+
+
+然后再通过一层 preset mapping 把这些属性映射成：
+风格方向
+
+
+配器建议
+
+
+节奏建议
+
+
+
+6.3 这有什么好处？
+这一步非常值钱，因为它让你的方案：
+技术上可做
+因为这些属性可以从 symbolic melody 中学出来，或者至少能构造 proxy labels。
+产品上合理
+因为新手用户本来也更适合接收：
+“更温暖”
+
+
+“更梦幻”
+
+
+“更轻盈”
+
+
+“更有活力”
+
+
+而不是直接面对复杂编曲参数。
+设计上可解释
+因为你可以根据特征写解释。
+
+7. 模型路线（主路线 + baseline）
+这里我给你一个最适合当前项目的方案：
+
+主路线（推荐最终方案）
+两阶段混合式 AI Module
+Stage 1：旋律编码与风格轮廓预测
+Stage 2：从风格轮廓映射到建议卡片
+
+Stage 1 做什么？
+模型输入短旋律 token sequence，输出若干中层属性预测：
+energy：low / mid / high
+
+
+density：sparse / medium / dense
+
+
+register：low / middle / high
+
+
+motion：smooth / mixed / leapy
+
+
+variation tendency：stable / moderate / high
+
+
+这些标签不一定是人工标的，可以由 symbolic features 自动构造 proxy labels。
+
+Stage 2 做什么？
+通过规则或 preset library，把 Stage 1 预测结果映射成最终用户看到的 suggestion cards。
+例如：
+例子 1
+如果：
+register = high
+
+
+density = sparse
+
+
+motion = smooth
+
+
+那么建议：
+Style = dreamy / calm
+
+
+Instrumentation = soft bell + pad / airy strings
+
+
+Rhythm = keep simple
+
+
+例子 2
+如果：
+density = dense
+
+
+variation = high
+
+
+motion = leapy
+
+
+那么建议：
+Style = energetic / playful
+
+
+Instrumentation = bright pluck + synth
+
+
+Rhythm = allow more activity
+
+
+
+8. Baseline 1（必须做，最稳）
+Feature-based classifier + rule mapping
+这是我最推荐你先做出来的版本。
+输入
+symbolic melody 的手工特征
+模型
+可选：
+XGBoost
+
+
+Random Forest
+
+
+小型 MLP
+
+
+输出
+预测中层属性标签：
+energy
+
+
+density
+
+
+register
+
+
+motion
+
+
+然后
+用规则映射到 suggestion cards
+
+为什么它是最稳 baseline？
+因为它有这些优点：
+非常快能跑通
+
+
+很容易 debug
+
+
+很适合做错误分析
+
+
+即使最终不用，也能作为对照
+
+
+对数据量要求没那么夸张
+
+
+非常适合作为 Colab 第一个版本
+
+
+
+9. Baseline 2（可选增强）
+Small Transformer Melody Encoder
+这才是更像你 PA3 训练路线的进阶版。
+输入
+tokenized melody sequence
+编码器
+小型 Transformer encoder
+ 建议先从：
+2–4 层
+
+
+hidden size 128/256
+
+
+4/8 heads
+ 开始
+
+
+输出
+多头分类（multi-head classification）：
+energy head
+
+
+density head
+
+
+register head
+
+
+motion head
+
+
+variation head
+
+
+然后
+同样进入 preset mapping 层
+
+为什么这条路线适合你？
+因为你已经做过 transformer 训练，不会完全陌生。
+ 而且这不是让你从零做一个大模型，而是做一个：
+轻量、任务明确、可解释的 sequence encoder
+这非常适合课程项目。
+
+10. 为什么主路线适合 complete beginners？
+这个问题必须正面回答，因为 Rubric 明确要看。
+理由 1：输入简单
+只要求用户输入一小段旋律，不要求：
+写和弦
+
+
+写完整乐谱
+
+
+输入复杂 prompt
+
+
+上传音频素材
+
+
+所以非常适合零基础用户。
+
+理由 2：输出不是专业参数，而是“能懂的建议”
+模型不直接甩给用户 hidden representation，也不直接给复杂 DAW 设置，而是输出：
+风格方向
+
+
+配器预设
+
+
+节奏复杂度建议
+
+
+变化程度建议
+
+
+这比“纯生成结果 + 让你自己理解”更适合新手。
+
+理由 3：支持 steering interface
+这个模块天然支持你的产品 workflow：
+用户输入旋律
+
+
+系统给 3 张建议卡
+
+
+用户比较
+
+
+用户选择
+
+
+用户微调
+
+
+继续生成/保存
+
+
+所以它不是一个孤立模型，而是整个交互设计的核心引擎。
+
+理由 4：可解释
+由于我们保留了 symbolic features，系统可以给出简单解释，帮助用户建立：
+control
+
+
+transparency
+
+
+authorship
+
+
+这和你的研究问题是对齐的。
+
+11. 训练与推理范围（必须写死）
+我做什么
+做一个 lightweight suggestion module
+
+
+输入是 1–2 小节单声部旋律
+
+
+输出是 3 组 beginner-friendly suggestion cards
+
+
+支持快速推理，可嵌入交互原型
+
+
+
+我不做什么
+不做 full-song generation
+
+
+不做 text-to-music 大模型
+
+
+不做最终音频母带级输出
+
+
+不做多轨专业编曲自动化
+
+
+不做歌词到整首歌的端到端系统
+
+
+
+推理目标
+MVP 阶段建议把目标设成：
+一次输入后输出 2–3 组建议
+
+
+推理时间尽量控制在 几秒内
+
+
+优先保证“建议可理解、可比较”，而不是“建议极其炫技”
+
+
+
+12. 失败备选方案（非常关键）
+这一部分决定你是不是“真的有工程意识”。
+
+失败场景 1：Transformer 训练效果一般
+降级方案
+退回到 Baseline 1：feature-based classifier + rule mapping
+这仍然是一个合法而且很稳的 AI module，因为：
+仍然有模型
+
+
+仍然有输入输出
+
+
+仍然有预测
+
+
+仍然有产品价值
+
+
+
+失败场景 2：MAESTRO 不适合直接学出配器建议
+降级方案
+明确把模型只用于预测：
+energy
+
+
+density
+
+
+register
+
+
+motion
+
+
+然后把“配器建议”交给手工设计的 preset mapping table
+这不是偷懒，而是合理的混合系统设计。
+
+失败场景 3：模型输出不稳定、不够像“建议”
+降级方案
+加入 retrieval-based nearest neighbor 作为辅助：
+计算输入旋律的特征向量
+
+
+找最相近的几个旋律片段
+
+
+从相似样本对应的 style profile 中给建议
+
+
+也就是：
+ 模型预测 + 检索增强 的混合方案
+
+失败场景 4：输出太抽象，用户看不懂
+降级方案
+缩小输出空间，只保留 4–5 个固定 preset families，例如：
+Warm Piano
+
+
+Dreamy Pad
+
+
+Soft Strings
+
+
+Bright Pluck
+
+
+Energetic Synth
+
+
+这会让用户更容易比较，也让系统更可控。
+
+13. 针对你 Colab Pro + A100 的操作方案
+你有 A100，这很棒，但我建议你不要从第一天就把 A100 当唯一救命药。
+ 最好的策略是：
+
+阶段 1：先用 CPU / 普通 GPU 跑通数据和 baseline
+做：
+MIDI 解析
+
+
+note sequence 构建
+
+
+feature extraction
+
+
+baseline 1 训练
+
+
+这一步 A100 不是必须。
+
+阶段 2：用 A100 跑 Baseline 2 / Transformer
+做：
+tokenization
+
+
+transformer encoder 训练
+
+
+多头分类
+
+
+ablation / 调参
+
+
+这一步 A100 很合适。
+
+阶段 3：把最终最稳版本固化
+不一定最后保留最“重”的模型，
+ 而是保留最适合：
+交互演示
+
+
+输出稳定
+
+
+可解释
+
+
+能接 UI
+ 的版本。
+
+
+
+实际工程建议
+Colab 设置
+Python 3
+
+
+A100 GPU
+
+
+高 RAM：建议打开
+
+
+用 Google Drive 存 checkpoint / 输出样例 / 特征缓存
+
+
+训练建议
+使用 mixed precision
+
+
+early stopping
+
+
+每轮保存 validation best
+
+
+每次实验单独记录 config
+
+
+产出建议
+每轮训练至少保存：
+config
+
+
+best checkpoint
+
+
+validation result
+
+
+10 个推理样例
+
+
+错误分析 memo
+
+
+这样后面 Assignment 4 和 7 会轻松很多。
+
+14. 当前推荐的最终技术路线
+如果让我现在替你拍板，我建议最终写成：
+最终技术路线
+采用一个两阶段混合式 suggestion module：
+ 首先使用 symbolic melody 的 token sequence 和辅助特征预测中层风格轮廓（如 energy、density、register、motion），再通过 preset mapping 将这些预测结果转化为面向零基础用户的风格方向、配器预设和节奏复杂度建议。
+这句话非常像 proposal 或 final presentation 里的 technical slide。
+
+15. Assignment 3 提交版总结
+本项目的 AI module 不追求端到端生成完整歌曲，而是聚焦于一个轻量、可解释、可嵌入交互流程的音乐建议引擎。该模块以 1–2 小节的单声部 symbolic melody 为输入，使用 token sequence 与辅助特征对旋律进行建模，预测若干中层音乐属性，再将其映射为面向零基础用户的风格方向、配器预设与节奏复杂度建议。相比直接输出黑箱结果，这种设计更适合 beginner-facing steering interface，也更有利于后续实现比较、微调与解释性反馈。
